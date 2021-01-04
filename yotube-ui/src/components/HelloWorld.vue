@@ -1,22 +1,28 @@
 <template>
   <div id="app">
-    <vue-webrtc ref="webrtc" width="100%" roomId="sample-room" cameraHeight="500"/>
-    Room: sample-room
+    <video
+      controls
+      autoplay
+      playsinline
+      ref="video"
+      muted
+    ></video>
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import WebRTC from 'vue-webrtc'
-// ISSUE 5: https://github.com/westonsoftware/vue-webrtc/issues/5
-import * as io from 'socket.io-client'
-window.io = io
-//
-Vue.use(WebRTC)
 export default {
   name: 'App',
   mounted: function () {
-    this.$refs.webrtc.join()
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        width: 1080,
+        height: 720
+      }
+    }).then(stream => {
+      this.$refs.video.srcObject = stream
+      console.log(stream)
+    })
   }
 }
 </script>
