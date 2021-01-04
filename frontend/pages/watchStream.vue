@@ -5,7 +5,9 @@
         <v-card class="pa-2" outlined> 推薦的頻道 </v-card>
       </v-col>
       <v-col cols="7">
-        <v-card color="black"> </v-card>
+        <v-card color="black"> 
+          <video ref="videoPlayer" controls autoplay muted width="600" height="450"></video>
+        </v-card>
       </v-col>
       <v-col cols="3">
         <v-card outlined class="text-center">
@@ -40,6 +42,7 @@
 <script>
 import Logo from "~/components/Logo.vue";
 import VuetifyLogo from "~/components/VuetifyLogo.vue";
+import flvjs from 'flv.js';
 
 export default {
   layout: "default",
@@ -50,6 +53,21 @@ export default {
           ],
     };
   },
+  mounted(){
+	if (flvjs.isSupported()) {
+    let videoElement = this.$ref.videoPlayer
+		let flvPlayer = flvjs.createPlayer({
+			type: 'flv',
+			isLive: true,
+			hasAudio: false,
+			url: 'http://www.xxxxxxx.com:18080/11/22.flv'
+		});
+		flvPlayer.attachMediaElement(videoElement);
+		flvPlayer.load();
+		flvPlayer.play();
+	}
+
+},
   components: {
     Logo,
     VuetifyLogo,
