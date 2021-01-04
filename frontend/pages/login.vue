@@ -1,5 +1,6 @@
 <template>
-  <v-card elevation="2" class="text-center pt-3">
+  <v-row justify="center"> 
+    <v-card elevation="2" class="text-center pt-3" width="500" :loading="loginLoading">
     <v-container class="pt-7">
       <div class="d-flex flex-row justify-center align-center">
         <v-img max-height="75" max-width="150" src="/yotubelive.png"></v-img>
@@ -32,7 +33,7 @@
                   v-model="loginUser.password"
                   required
                 ></v-text-field>
-                <v-btn block to="/">登入</v-btn>
+                <v-btn block @click.prevent="login">登入</v-btn>
               </v-form>
             </v-container>
           </v-tab-item>
@@ -91,6 +92,7 @@
       </v-card-text>
     </v-container>
   </v-card>
+  </v-row>
 </template>
 <script>
 import { userRegister } from "../apis/user.js";
@@ -110,6 +112,7 @@ export default {
       loginUser: {},
       registerUser: {},
       responseMessage: { isPop: false, text: "", style: "error" },
+      loginLoading: false,
     };
   },
   methods: {
@@ -121,12 +124,11 @@ export default {
       userRegister(vm.registerUser)
         .then((res) => {
           console.log(res)
+          vm.responseMessage.isPop = true;
           vm.responseMessage.text = res.message;
           if (res.success) {
-            vm.responseMessage.isPop = true;
             vm.responseMessage.style = "success";
           } else {
-            vm.responseMessage.isPop = false;
             vm.responseMessage.style = "error";
           }
         })
@@ -134,6 +136,17 @@ export default {
           console.log(error);
         });
     },
+    login() {
+      let vm = this
+      vm.loginLoading = true
+      vm.$store.dispatch('user/login',vm.loginUser)
+        .then((res) => {
+          if(res.success){
+            vm.$router.push('/')
+          }
+                      vm.loginLoading = false
+        })
+    }
   },
   computed: {
     passwordConfirmationRule() {
@@ -145,10 +158,6 @@ export default {
 };
 </script>
 <style lang="scss">
-body {
-  max-width: 500px;
-  margin: 0 auto !important;
-}
 .WelcomeText {
   display: inline-block;
   font-weight: bold;
