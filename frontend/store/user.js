@@ -71,6 +71,7 @@ export const actions = {
 }
 
 export const getters = {
+    status: state => state.status,
     token: state => state.token,
     username: state => state.username
 }

@@ -24,7 +24,7 @@
                 </template>
               </v-list>
             </v-card>
-            <v-text-field v-model="message" @keyup.enter="sendMessage"
+            <v-text-field v-if="isLogin" v-model="message" @keyup.enter="sendMessage"
               placeholder="傳送訊息"
               outlined
               dense
@@ -52,9 +52,11 @@ export default {
           ],
       message: "",
       onlineCount: 0,
+      isLogin: false,
     };
   },
   created() {
+    if (this.$store.getters['user/status'] === 'success') this.isLogin = true;
     socket.on("newMessage", (message) => {
       this.messages.push(message);
     });
@@ -69,7 +71,7 @@ export default {
   methods: {
     sendMessage() {
       if (!this.message.trim()) {return};
-      console.log(this.$store.getters['user/username'])
+      console.log(this.$store.getters)
       const message = {username: this.$store.getters['user/username'], text: this.message.trim()};
       this.messages.push(message);
       this.message = "";
