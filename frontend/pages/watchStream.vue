@@ -30,6 +30,7 @@
               dense
               class
             ></v-text-field>
+            <v-card-text>Current Online: {{onlineCount}}</v-card-text>
           </v-card-text>
         </v-card>
       </v-col>
@@ -50,11 +51,15 @@ export default {
           { username: "Jason", text: "yoyo" },
           ],
       message: "",
+      onlineCount: 0,
     };
   },
   created() {
     socket.on("newMessage", (message) => {
       this.messages.push(message);
+    });
+    socket.on("online", (onlineCount) => {
+      this.onlineCount = onlineCount;
     });
   },
   components: {
@@ -70,7 +75,6 @@ export default {
       this.message = "";
       socket.emit("sendMessage", message);
       console.log(this.message);
-
     }
   }
 };

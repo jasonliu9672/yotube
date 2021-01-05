@@ -23,9 +23,13 @@ http.listen(4000, () => {
     console.log('Listening on port *: 4000');
 });
 
+let onlineCount = 0;
 io.on('connection', (socket) => {
+    onlineCount += 1;
+    io.emit("online", onlineCount);
     socket.on('disconnect', () => {
-        console.log("A user disconnected!");
+        onlineCount = (onlineCount < 0) ? 0 : onlineCount -= 1;
+        io.emit("online", onlineCount);
     });
     socket.on('sendMessage', (data) => {
         console.log(data);
