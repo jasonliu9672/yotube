@@ -24,7 +24,7 @@
                 </template>
               </v-list>
             </v-card>
-            <v-text-field
+            <v-text-field v-model="message" @keyup.enter="sendMessage"
               placeholder="傳送訊息"
               outlined
               dense
@@ -40,7 +40,8 @@
 <script>
 import Logo from "~/components/Logo.vue";
 import VuetifyLogo from "~/components/VuetifyLogo.vue";
-
+import io from "socket.io-client";
+const socket = io("http://localhost:4000");
 export default {
   layout: "default",
   data() {
@@ -48,12 +49,29 @@ export default {
       messages: [
           { username: "Jason", text: "yoyo" },
           ],
+      message: "",
     };
+  },
+  created() {
+    socket.on("newMessage", (message) => {
+      this.messages.push(message);
+    });
   },
   components: {
     Logo,
     VuetifyLogo,
   },
+  methods: {
+    sendMessage() {
+      if (!this.message.trim()) {return};
+      const message = {username: "Test", text: this.message.trim()};
+      this.messages.push(message);
+      this.message = "";
+      socket.emit("sendMessage", message);
+      console.log(this.message);
+
+    }
+  }
 };
 </script>
 <style lang="scss">

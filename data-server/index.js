@@ -4,16 +4,32 @@ const userRouter = require('./routes/user.js')
 require('dotenv').config()
 const app = express()
 app.use(express.json())
-app.use(cors({
-    credentials: true,
-    origin: 'http://localhost:3000'
-  }))
+// app.use(cors({
+//     credentials: true,
+//     origin: 'http://localhost:3000'
+//   }))
+app.use(cors())
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 });
 app.use('/user',userRouter)
 const http = require('http').Server(app)
-const io = require('socket.io')(http)
+const io = require('socket.io')(http, {
+    cors: {
+      origin: "http://localhost:3000",
+      credentials: true
+    }
+})
 http.listen(4000, () => {
     console.log('Listening on port *: 4000');
 });
+
+io.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+        console.log("A user disconnected!");
+    });
+    socket.on('sendMessage', (data) => {
+        console.log(data);
+        socket.broadcast.emit('newMessage', data);
+    });
+})
