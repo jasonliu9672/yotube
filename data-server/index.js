@@ -4,11 +4,10 @@ const userRouter = require('./routes/user.js')
 require('dotenv').config()
 const app = express()
 app.use(express.json())
-// app.use(cors({
-//     credentials: true,
-//     origin: 'http://localhost:3000'
-//   }))
-app.use(cors())
+app.use(cors({
+    credentials: true,
+    origin: 'http://localhost:3000'
+  }))
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 });

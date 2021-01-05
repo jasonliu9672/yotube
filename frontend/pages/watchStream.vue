@@ -64,7 +64,8 @@ export default {
   methods: {
     sendMessage() {
       if (!this.message.trim()) {return};
-      const message = {username: "Test", text: this.message.trim()};
+      console.log(this.$store.getters['user/username'])
+      const message = {username: this.$store.getters['user/username'], text: this.message.trim()};
       this.messages.push(message);
       this.message = "";
       socket.emit("sendMessage", message);

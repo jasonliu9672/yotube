@@ -11,9 +11,10 @@ export const mutations = {
     auth_request(state) {
         state.status = 'loading'
     },
-    auth_success(state, { token }) {
-        state.status = 'success'
-        state.token = token
+    auth_success(state, { token, username }) {
+        state.status = 'success';
+        state.token = token;
+        state.username = username;
     },
     auth_fail(state) {
         state.status = 'fail'
@@ -24,6 +25,7 @@ export const mutations = {
     logout(state) {
         state.status = ''
         state.token = ''
+        state.username = ''
     },
 }
 
@@ -35,9 +37,11 @@ export const actions = {
                 .then(res => {
                     if (res.success) {
                         const token = res.token;
+                        const username = res.username;
+                        console.log('username:', username)
                         if (token) {
                             Cookies.set('token', token)
-                            commit('auth_success', { token });
+                            commit('auth_success', { token, username });
                         }
                         else {
                             commit('auth_fail');
@@ -67,5 +71,6 @@ export const actions = {
 }
 
 export const getters = {
-    token: state => state.token
+    token: state => state.token,
+    username: state => state.username
 }
