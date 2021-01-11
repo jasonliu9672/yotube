@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 import { userLogin } from "../apis/user.js";
-import { deleteAuthHeader } from "../utils/request"
+import { deleteAuthHeader } from "../utils/authRequest"
 
 export const state = () => ({
     status: '',

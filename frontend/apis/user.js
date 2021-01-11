@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/authRequest'
 export function userLogin(username,password) {
     return request({
       url: '/user/login',
