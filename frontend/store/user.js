@@ -5,6 +5,7 @@ import { deleteAuthHeader } from "../utils/request"
 export const state = () => ({
     status: '',
     token: Cookies.get('token') || '',
+    username: ''
 })
 
 export const mutations = {

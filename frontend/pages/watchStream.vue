@@ -24,7 +24,7 @@
                 </template>
               </v-list>
             </v-card>
-            <v-text-field v-if="isLogin" v-model="message" @keyup.enter="sendMessage"
+            <v-text-field :disabled="!isLogin" v-model="message" @keyup.enter="sendMessage"
               placeholder="傳送訊息"
               outlined
               dense
@@ -57,10 +57,12 @@ export default {
   },
   created() {
     if (this.$store.getters['user/status'] === 'success') this.isLogin = true;
+    socket.emit("newConnect");
     socket.on("newMessage", (message) => {
       this.messages.push(message);
     });
     socket.on("online", (onlineCount) => {
+      console.log("online: ", onlineCount)
       this.onlineCount = onlineCount;
     });
   },

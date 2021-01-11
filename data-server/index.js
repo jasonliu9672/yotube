@@ -25,10 +25,14 @@ http.listen(4000, () => {
 
 let onlineCount = 0;
 io.on('connection', (socket) => {
-    onlineCount += 1;
-    io.emit("online", onlineCount);
+    socket.on('newConnect', () => {
+        console.log("newConnect: ", onlineCount)
+        onlineCount += 1;
+        io.emit("online", onlineCount);
+    });
     socket.on('disconnect', () => {
         onlineCount = (onlineCount < 0) ? 0 : onlineCount -= 1;
+        console.log("disconnect: ", onlineCount)
         io.emit("online", onlineCount);
     });
     socket.on('sendMessage', (data) => {
