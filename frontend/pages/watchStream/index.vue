@@ -47,7 +47,7 @@ export default {
     },
     fetchLiveStreams(){
         getStreams().then((res) => (this.liveStreams = res.data.live))
-           console.log('fetch')
+           //console.log('fetch')
     }
   },
 };
