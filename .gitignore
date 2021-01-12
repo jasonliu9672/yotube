@@ -1,7 +1,10 @@
 node_modules/
+.DS_Store
 .env
 # Nuxt build
 .nuxt
 
 # Nuxt generate
 dist
+
+*.mp4

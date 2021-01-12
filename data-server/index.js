@@ -23,20 +23,30 @@ http.listen(4000, () => {
     console.log('Listening on port *: 4000');
 });
 
-let onlineCount = 0;
+let onlineCount = {};
 io.on('connection', (socket) => {
-    socket.on('newConnect', () => {
-        console.log("newConnect: ", onlineCount)
-        onlineCount += 1;
-        io.emit("online", onlineCount);
+    let curRoom = "";
+    socket.on('newConnect', (room) => {
+        console.log("before room: ", room, curRoom);
+        if (curRoom !== room) {
+            curRoom = room;
+            socket.leave(curRoom);
+            socket.join(room);
+        }
+        if (room in onlineCount){
+            onlineCount[room] += 1;
+        } else {
+            onlineCount[room] = 1;
+        }
+        console.log("room: ", room, curRoom);
+        io.in(curRoom).emit("online", onlineCount[curRoom]);
     });
     socket.on('disconnect', () => {
-        onlineCount = (onlineCount < 0) ? 0 : onlineCount -= 1;
-        console.log("disconnect: ", onlineCount)
-        io.emit("online", onlineCount);
+        onlineCount[curRoom] -= 1;
+        socket.broadcast.to(curRoom).emit("online", onlineCount[curRoom]);
     });
     socket.on('sendMessage', (data) => {
-        console.log(data);
-        socket.broadcast.emit('newMessage', data);
+        console.log(data, curRoom);
+        socket.broadcast.to(curRoom).emit('newMessage', data);
     });
 })

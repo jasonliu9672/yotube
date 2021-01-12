@@ -31,3 +31,10 @@ export function userLogout() {
       method: 'post',
     })
 }
+
+export function getStreamId(id) {
+  return request({
+    url: `/user/getStreamId/${id}`,
+    method: 'get',
+  })
+}

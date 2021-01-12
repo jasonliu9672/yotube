@@ -41,7 +41,8 @@ export const actions = {
                         const username = res.username;
                         console.log('username:', username)
                         if (token) {
-                            Cookies.set('token', token)
+                            Cookies.set('token', token);
+                            Cookies.set('username', username);
                             commit('auth_success', { token, username });
                         }
                         else {
@@ -56,6 +57,7 @@ export const actions = {
                 .catch(err => {
                     commit('auth_error');
                     Cookies.remove('token');
+                    Cookies.remove('username');
                     reject(err);
                 })
         })

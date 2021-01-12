@@ -16,6 +16,9 @@ const UserSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  streamId: {
+    type: String
   }
 })
 
