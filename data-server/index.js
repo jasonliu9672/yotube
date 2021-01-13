@@ -27,7 +27,6 @@ let onlineCount = {};
 io.on('connection', (socket) => {
     let curRoom = "";
     socket.on('newConnect', (room) => {
-        console.log("before room: ", room, curRoom);
         if (curRoom !== room) {
             socket.leave(curRoom);
             curRoom = room;
@@ -38,7 +37,6 @@ io.on('connection', (socket) => {
         } else {
             onlineCount[room] = 1;
         }
-        console.log("room: ", room, curRoom);
         io.in(curRoom).emit("online", onlineCount[curRoom]);
     });
     socket.on('disconnect', () => {

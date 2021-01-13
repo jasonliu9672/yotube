@@ -94,16 +94,23 @@ export default {
     // 	}f
     if (process.client) {
       const flv = require("../../static/js/flv.js");
-      this.flvPlayer = flv.createPlayer({
-        type: "flv",
-        isLive: true,
-        hasAudio: false,
-        url: process.env.mediaServerUrl + `/live/${this.$route.params.streamId}.flv`,
-      });
-      let videoElement = this.$refs.videoPlayer;
-      this.flvPlayer.attachMediaElement(videoElement);
-      this.flvPlayer.load();
-      this.flvPlayer.play();
+      let streamId = "test";
+      getStreamId(this.$route.params.streamId)
+        .then(res => {
+          streamId = res.streamId;
+          this.flvPlayer = flv.createPlayer({
+          type: "flv",
+          isLive: true,
+          hasAudio: false,
+          url:
+            process.env.mediaServerUrl +
+            `/live/${streamId}.flv`,
+        });
+        let videoElement = this.$refs.videoPlayer;
+        this.flvPlayer.attachMediaElement(videoElement);
+        this.flvPlayer.load();
+        this.flvPlayer.play();
+        }).catch(err => {console.log(err);})
     }
   },
   watch: {

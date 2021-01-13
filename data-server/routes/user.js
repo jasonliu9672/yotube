@@ -165,4 +165,27 @@ router.get('/getStreamId/:id', (req, res) => {
   })
 })
 
+router.post('/streamIdToUser', async (req, res) => {
+  //console.log("body:", req.body)
+  const streamIds = req.body;
+  let result = [];
+  try {
+    for (let streamId of streamIds) {
+      const user = await User.findOne({streamId: streamId});
+      console.log(streamId, user);
+      if (user) {
+        result.push(user.username);
+        console.log(result)
+      }
+    }
+    
+    console.log("result: ", result);
+    res.status(200).send({usernames: result});
+  } catch (err) {
+    res.sendStatus(404);
+    console.log(err);
+  }
+
+})
+
 module.exports = router

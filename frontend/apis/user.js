@@ -27,7 +27,8 @@ export function getAllUsers() {
 
 export function getUser(username) {
   return request({
-    url: `/user/${username}`
+    url: `/user/${username}`,
+    method: 'get'
   })
 }
 
@@ -42,5 +43,13 @@ export function getStreamId(id) {
   return request({
     url: `/user/getStreamId/${id}`,
     method: 'get',
+  })
+}
+
+export function streamIdToUser(streamIds) {
+  return request({
+    url: '/user/streamIdToUser',
+    method: 'post',
+    data: streamIds
   })
 }
