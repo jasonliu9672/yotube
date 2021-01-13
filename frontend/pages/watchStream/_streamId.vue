@@ -5,11 +5,11 @@
         <v-card color="grey">
           <video ref="videoPlayer" controls autoplay muted width="100%"></video>
         </v-card>
-        <v-container class="d-flex flex-row">
+        <!-- <v-container class="d-flex flex-row">
           <v-avatar size="62">
             <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
           </v-avatar>
-        </v-container>
+        </v-container> -->
       </v-col>
       <div class="fixed-chat">
         <v-card outlined class="text-center">
@@ -17,24 +17,27 @@
           <v-divider></v-divider>
           <v-card-text>
             <v-card height="500px" class="overflow-auto">
-              <v-list>
+              <v-list dense>
                 <template v-for="(message, index) in messages">
                   <v-list-item :key="index">
                     <div class="d-flex flex-row">
-                      <p class="chat-username">{{ message.username }}:</p>
-                      <p class="chat-text">{{ message.text }}</p>
+                      <p class="chat-username mb-0" :style="{color: randomColor()}">{{ message.username }}:</p>
+                      <p class="chat-text mb-0" :style="{color: 'black'}"> {{ message.text }}</p>
                     </div>
                   </v-list-item>
                 </template>
               </v-list>
             </v-card>
-            <v-text-field :disabled="!isLogin" v-model="message" @keyup.enter="sendMessage"
+            <v-text-field
+              :disabled="!isLogin"
+              v-model="message"
+              @keyup.enter="sendMessage"
               placeholder="傳送訊息"
               outlined
               dense
               class
             ></v-text-field>
-            <v-card-text>Current Online: {{onlineCount}}</v-card-text>
+            <v-card-text>Current Online: {{ onlineCount }}</v-card-text>
           </v-card-text>
         </v-card>
       </div>
@@ -46,20 +49,23 @@
 import Logo from "~/components/Logo.vue";
 import VuetifyLogo from "~/components/VuetifyLogo.vue";
 import io from "socket.io-client";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import { getStreamId } from "../../apis/user.js";
-const socket = io("localhost:4000", {transports: ['websocket'], upgrade: false});
+const socket = io("localhost:4000", {
+  transports: ["websocket"],
+  upgrade: false,
+});
 
 export default {
   layout: "default",
   data() {
     return {
-      messages: [{ username: "Jason", text: "yoyo" }],
+      messages: [],
       flvPlayer: undefined,
       message: "",
       onlineCount: 0,
       isLogin: false,
-      username: Cookies.get('username') || ""
+      username: Cookies.get("username") || "",
     };
   },
   created() {
@@ -69,7 +75,7 @@ export default {
       this.messages.push(message);
     });
     socket.on("online", (onlineCount) => {
-      console.log("online: ", onlineCount)
+      console.log("online: ", onlineCount);
       this.onlineCount = onlineCount;
     });
   },
@@ -88,24 +94,16 @@ export default {
     // 	}f
     if (process.client) {
       const flv = require("../../static/js/flv.js");
-      let streamId = "test";
-      getStreamId(this.$route.params.streamId)
-        .then(res => {
-          streamId = res.streamId;
-          this.flvPlayer = flv.createPlayer({
-          type: "flv",
-          isLive: true,
-          hasAudio: false,
-          url:
-            process.env.mediaServerUrl +
-            `/live/${streamId}.flv`,
-        });
-        let videoElement = this.$refs.videoPlayer;
-        this.flvPlayer.attachMediaElement(videoElement);
-        this.flvPlayer.load();
-        this.flvPlayer.play();
-        }).catch(err => {console.log(err);})
-      
+      this.flvPlayer = flv.createPlayer({
+        type: "flv",
+        isLive: true,
+        hasAudio: false,
+        url: process.env.mediaServerUrl + `/live/${this.$route.params.streamId}.flv`,
+      });
+      let videoElement = this.$refs.videoPlayer;
+      this.flvPlayer.attachMediaElement(videoElement);
+      this.flvPlayer.load();
+      this.flvPlayer.play();
     }
   },
   components: {
@@ -113,16 +111,23 @@ export default {
     VuetifyLogo,
   },
   methods: {
+     randomColor() {
+      const r = () => Math.floor(256 * Math.random());
+
+      return `rgb(${r()}, ${r()}, ${r()})`;
+    },
     sendMessage() {
-      if (!this.message.trim()) {return};
-      console.log(this.$store.getters)
-      const message = {username: this.username, text: this.message.trim()};
+      if (!this.message.trim()) {
+        return;
+      }
+      console.log(this.$store.getters);
+      const message = { username: this.username, text: this.message.trim() };
       this.messages.push(message);
       this.message = "";
       socket.emit("sendMessage", message);
       console.log(this.message);
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss">

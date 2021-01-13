@@ -25,6 +25,7 @@ export default {
   plugins: [
     // {ssr: false, src:'~/plugins/vue-google-oauth2'}
     // {src: '~/plugins/flv.js', ssr:false}
+    {src:'~/plugins/carousel3d.js',ssr:false}
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
