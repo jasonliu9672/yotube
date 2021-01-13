@@ -1,9 +1,15 @@
 node_modules/
+.DS_Store
 .env
 # Nuxt build
 .nuxt
 
 # Nuxt generate
 dist
+<<<<<<< HEAD
 media
 ffmpeg
+=======
+
+*.mp4
+>>>>>>> 2870867050aa84f563ffbebcb635a72abd96c84a

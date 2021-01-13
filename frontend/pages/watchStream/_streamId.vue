@@ -28,12 +28,13 @@
                 </template>
               </v-list>
             </v-card>
-            <v-text-field
+            <v-text-field :disabled="!isLogin" v-model="message" @keyup.enter="sendMessage"
               placeholder="傳送訊息"
               outlined
               dense
               class
             ></v-text-field>
+            <v-card-text>Current Online: {{onlineCount}}</v-card-text>
           </v-card-text>
         </v-card>
       </div>
@@ -44,6 +45,10 @@
 <script>
 import Logo from "~/components/Logo.vue";
 import VuetifyLogo from "~/components/VuetifyLogo.vue";
+import io from "socket.io-client";
+import Cookies from 'js-cookie';
+import { getStreamId } from "../../apis/user.js";
+const socket = io("localhost:4000", {transports: ['websocket'], upgrade: false});
 // import flvjs from 'flv.js';
 
 export default {
@@ -52,7 +57,22 @@ export default {
     return {
       messages: [{ username: "Jason", text: "yoyo" }],
       flvPlayer: undefined,
+      message: "",
+      onlineCount: 0,
+      isLogin: false,
+      username: Cookies.get('username') || ""
     };
+  },
+  created() {
+    if (this.username !== "") this.isLogin = true;
+    socket.emit("newConnect", this.$route.params.streamId);
+    socket.on("newMessage", (message) => {
+      this.messages.push(message);
+    });
+    socket.on("online", (onlineCount) => {
+      console.log("online: ", onlineCount)
+      this.onlineCount = onlineCount;
+    });
   },
   mounted() {
     // 	if (flvjs.isSupported()) {
@@ -69,25 +89,41 @@ export default {
     // 	}f
     if (process.client) {
       const flv = require("../../static/js/flv.js");
-      console.log(this.$route.params);
-      this.flvPlayer = flv.createPlayer({
-        type: "flv",
-        isLive: true,
-        hasAudio: false,
-        url:
-          process.env.mediaServerUrl +
-          `/live/${this.$route.params.streamId}.flv`,
-      });
-      let videoElement = this.$refs.videoPlayer;
-      this.flvPlayer.attachMediaElement(videoElement);
-      this.flvPlayer.load();
-      this.flvPlayer.play();
+      let streamId = "test";
+      getStreamId(this.$route.params.streamId)
+        .then(res => {
+          streamId = res.streamId;
+          this.flvPlayer = flv.createPlayer({
+          type: "flv",
+          isLive: true,
+          hasAudio: false,
+          url:
+            process.env.mediaServerUrl +
+            `/live/${streamId}.flv`,
+        });
+        let videoElement = this.$refs.videoPlayer;
+        this.flvPlayer.attachMediaElement(videoElement);
+        this.flvPlayer.load();
+        this.flvPlayer.play();
+        }).catch(err => {console.log(err);})
+      
     }
   },
   components: {
     Logo,
     VuetifyLogo,
   },
+  methods: {
+    sendMessage() {
+      if (!this.message.trim()) {return};
+      console.log(this.$store.getters)
+      const message = {username: this.username, text: this.message.trim()};
+      this.messages.push(message);
+      this.message = "";
+      socket.emit("sendMessage", message);
+      console.log(this.message);
+    }
+  }
 };
 </script>
 <style lang="scss">
