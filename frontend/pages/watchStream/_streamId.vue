@@ -49,7 +49,6 @@ import io from "socket.io-client";
 import Cookies from 'js-cookie';
 import { getStreamId } from "../../apis/user.js";
 const socket = io("localhost:4000", {transports: ['websocket'], upgrade: false});
-// import flvjs from 'flv.js';
 
 export default {
   layout: "default",
