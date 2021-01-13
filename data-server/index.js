@@ -29,8 +29,8 @@ io.on('connection', (socket) => {
     socket.on('newConnect', (room) => {
         console.log("before room: ", room, curRoom);
         if (curRoom !== room) {
-            curRoom = room;
             socket.leave(curRoom);
+            curRoom = room;
             socket.join(room);
         }
         if (room in onlineCount){

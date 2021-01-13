@@ -16,7 +16,7 @@
           <v-card-subtitle> 實況聊天室 </v-card-subtitle>
           <v-divider></v-divider>
           <v-card-text>
-            <v-card height="500px" class="overflow-auto">
+            <v-card ref="messages" height="500px" class="messages">
               <v-list>
                 <template v-for="(message, index) in messages">
                   <v-list-item :key="index">
@@ -55,7 +55,7 @@ export default {
   layout: "default",
   data() {
     return {
-      messages: [{ username: "Jason", text: "yoyo" }],
+      messages: [],
       flvPlayer: undefined,
       message: "",
       onlineCount: 0,
@@ -109,6 +109,9 @@ export default {
       
     }
   },
+  watch: {
+    messages: 'scrollToBottom'
+  },
   components: {
     Logo,
     VuetifyLogo,
@@ -122,6 +125,11 @@ export default {
       this.message = "";
       socket.emit("sendMessage", message);
       console.log(this.message);
+    },
+    scrollToBottom () {
+      this.$nextTick(() => {
+        this.$refs.messages.$refs.link.scrollTop = this.$refs.messages.$refs.link.scrollHeight
+      })
     }
   }
 };
@@ -138,5 +146,10 @@ export default {
   right: 0;
   position: fixed;
   width: 315.8px;
+}
+.messages {
+  height: 100%;
+  margin: 0;
+  overflow-y: scroll;
 }
 </style>
