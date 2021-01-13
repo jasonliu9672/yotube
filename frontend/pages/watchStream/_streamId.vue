@@ -16,7 +16,7 @@
           <v-card-subtitle> 實況聊天室 </v-card-subtitle>
           <v-divider></v-divider>
           <v-card-text>
-            <v-card height="500px" class="overflow-auto">
+            <v-card ref="messages" height="500px" class="messages">
               <v-list dense>
                 <template v-for="(message, index) in messages">
                   <v-list-item :key="index">
@@ -94,17 +94,27 @@ export default {
     // 	}f
     if (process.client) {
       const flv = require("../../static/js/flv.js");
-      this.flvPlayer = flv.createPlayer({
-        type: "flv",
-        isLive: true,
-        hasAudio: false,
-        url: process.env.mediaServerUrl + `/live/${this.$route.params.streamId}.flv`,
-      });
-      let videoElement = this.$refs.videoPlayer;
-      this.flvPlayer.attachMediaElement(videoElement);
-      this.flvPlayer.load();
-      this.flvPlayer.play();
+      let streamId = "test";
+      getStreamId(this.$route.params.streamId)
+        .then(res => {
+          streamId = res.streamId;
+          this.flvPlayer = flv.createPlayer({
+          type: "flv",
+          isLive: true,
+          hasAudio: false,
+          url:
+            process.env.mediaServerUrl +
+            `/live/${streamId}.flv`,
+        });
+        let videoElement = this.$refs.videoPlayer;
+        this.flvPlayer.attachMediaElement(videoElement);
+        this.flvPlayer.load();
+        this.flvPlayer.play();
+        }).catch(err => {console.log(err);})
     }
+  },
+  watch: {
+    messages: 'scrollToBottom'
   },
   components: {
     Logo,
@@ -127,7 +137,12 @@ export default {
       socket.emit("sendMessage", message);
       console.log(this.message);
     },
-  },
+    scrollToBottom () {
+      this.$nextTick(() => {
+        this.$refs.messages.$refs.link.scrollTop = this.$refs.messages.$refs.link.scrollHeight
+      })
+    }
+  }
 };
 </script>
 <style lang="scss">
@@ -142,5 +157,10 @@ export default {
   right: 0;
   position: fixed;
   width: 315.8px;
+}
+.messages {
+  height: 100%;
+  margin: 0;
+  overflow-y: scroll;
 }
 </style>

@@ -137,6 +137,16 @@ router.get('/list', middlewares.auth, (req, res) => {
   })
 })
 
+router.get('/user/:id', async (req, res) => {
+  const username = req.params.id;
+  const user = await User.findOne({ username: username});
+  if (!user) {
+    res.sendStatus(404);
+  } else {
+    res.status(200).send({user:user});
+  }
+})
+
 router.get('/getStreamId/:id', (req, res) => {
   const username = req.params.id;
   User.findOne({ username: username }, (err, result) => {
@@ -153,6 +163,29 @@ router.get('/getStreamId/:id', (req, res) => {
       });
     }
   })
+})
+
+router.post('/streamIdToUser', async (req, res) => {
+  //console.log("body:", req.body)
+  const streamIds = req.body;
+  let result = [];
+  try {
+    for (let streamId of streamIds) {
+      const user = await User.findOne({streamId: streamId});
+      console.log(streamId, user);
+      if (user) {
+        result.push(user.username);
+        console.log(result)
+      }
+    }
+    
+    console.log("result: ", result);
+    res.status(200).send({usernames: result});
+  } catch (err) {
+    res.sendStatus(404);
+    console.log(err);
+  }
+
 })
 
 module.exports = router

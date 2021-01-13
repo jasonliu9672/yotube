@@ -53,10 +53,10 @@
             height="250"
             class="mr-6 mb-6 text-center"
             color="grey"
-            @click.prevent="navigateToStream(streams.publisher.stream)"
+            @click.prevent="navigateToStream(streams)"
           >
             <p class="display-1 text--primary">
-              {{ streams.publisher.stream }}
+              {{ streams }}
             </p>
           </v-card>
         </v-tab-item>
@@ -66,6 +66,7 @@
 </template>
 <script>
 import { getStreams, getM3U8 } from "../../apis/stream.js";
+import { streamIdToUser } from "../../apis/user.js";
 export default {
   data() {
     return {
@@ -98,15 +99,26 @@ export default {
     // getM3U8().then(res => conosole.log(res))
     this.streamRefresh = setInterval(() => {
       this.fetchLiveStreams();
-    }, 5000);
+    }, 10000);
   },
   methods: {
     navigateToStream(streamName) {
       this.$router.push(`${this.$route.fullPath}/${streamName}`);
     },
-    fetchLiveStreams() {
-      getStreams().then((res) => (this.liveStreams = res.data.live));
-      //console.log('fetch')
+    async fetchLiveStreams() {
+      const streams = await getStreams();
+      if (streams.data.live) {
+
+        console.log("curr: ",streams);
+        const streamIds = Object.keys(streams.data.live);
+        if (Array.isArray(streamIds)) {
+          const usernames =  await streamIdToUser(streamIds);
+          this.liveStreams = usernames.usernames;
+            //(this.liveStreams = res.data.live)
+        
+          //console.log('fetch')
+        }
+      }
     },
   },
 };

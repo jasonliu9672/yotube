@@ -25,6 +25,13 @@ export function getAllUsers() {
     })
 }
 
+export function getUser(username) {
+  return request({
+    url: `/user/${username}`,
+    method: 'get'
+  })
+}
+
 export function userLogout() {
     return request({
       url: '/user/logout',
@@ -36,5 +43,13 @@ export function getStreamId(id) {
   return request({
     url: `/user/getStreamId/${id}`,
     method: 'get',
+  })
+}
+
+export function streamIdToUser(streamIds) {
+  return request({
+    url: '/user/streamIdToUser',
+    method: 'post',
+    data: streamIds
   })
 }
