@@ -25,6 +25,12 @@ export function getAllUsers() {
     })
 }
 
+export function getUser(username) {
+  return request({
+    url: `/user/${username}`
+  })
+}
+
 export function userLogout() {
     return request({
       url: '/user/logout',

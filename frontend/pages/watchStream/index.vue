@@ -13,7 +13,34 @@
     >
       <v-tabs-items v-model="tab">
         <v-tab-item :key="0">
-          
+          <v-container class="d-flex flex-row">
+            <v-card
+              v-for="(category, index) in categories"
+              :key="index"
+              tile
+              hover
+              width="200"
+              height="350"
+              class="mr-10 mb-6 text-center"
+            >
+              <v-img :src="category.src" min-height="270"></v-img>
+              <h4 class="my-1">{{ category.name }}</h4>
+              <v-card-text class="pa-0">
+                <v-chip-group
+                  active-class="orange accent-4 white--text"
+                  column
+                  class="ml-2"
+                >
+                  <v-chip
+                    v-for="(feature, index) in category.features"
+                    :key="index"
+                  >
+                    {{ feature }}
+                  </v-chip>
+                </v-chip-group>
+              </v-card-text>
+            </v-card>
+          </v-container>
         </v-tab-item>
         <v-tab-item :key="1">
           <v-card
@@ -45,6 +72,20 @@ export default {
       tab: "",
       liveStreams: [],
       streamRefresh: undefined,
+      categories: [
+        {
+          src: "/lol.png",
+          name: "英雄聯盟",
+          viewCount: 14.9,
+          features: ["MOBA", "動作"],
+        },
+        {
+          src: "/BL.jpg",
+          name: "實驗室人生",
+          viewCount: 2,
+          features: ["生活實況", "生存"],
+        },
+      ],
     };
   },
   //   async asyncData() {
@@ -63,10 +104,10 @@ export default {
     navigateToStream(streamName) {
       this.$router.push(`${this.$route.fullPath}/${streamName}`);
     },
-    fetchLiveStreams(){
-        getStreams().then((res) => (this.liveStreams = res.data.live))
-           //console.log('fetch')
-    }
+    fetchLiveStreams() {
+      getStreams().then((res) => (this.liveStreams = res.data.live));
+      //console.log('fetch')
+    },
   },
 };
 </script>

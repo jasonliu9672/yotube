@@ -137,6 +137,16 @@ router.get('/list', middlewares.auth, (req, res) => {
   })
 })
 
+router.get('/user/:id', async (req, res) => {
+  const username = req.params.id;
+  const user = await User.findOne({ username: username});
+  if (!user) {
+    res.sendStatus(404);
+  } else {
+    res.status(200).send({user:user});
+  }
+})
+
 router.get('/getStreamId/:id', (req, res) => {
   const username = req.params.id;
   User.findOne({ username: username }, (err, result) => {
