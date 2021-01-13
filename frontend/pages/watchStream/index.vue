@@ -63,16 +63,10 @@ export default {
     navigateToStream(streamName) {
       this.$router.push(`${this.$route.fullPath}/${streamName}`);
     },
-<<<<<<< HEAD
-    fetchLiveStreams() {
-      getStreams().then((res) => (this.liveStreams = res.data.live));
-    },
-=======
     fetchLiveStreams(){
         getStreams().then((res) => (this.liveStreams = res.data.live))
            //console.log('fetch')
     }
->>>>>>> 2870867050aa84f563ffbebcb635a72abd96c84a
   },
 };
 </script>
