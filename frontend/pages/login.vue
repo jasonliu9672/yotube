@@ -49,6 +49,7 @@
                     {{ loginResponse.text }}
                   </v-alert>
                   <v-btn block @click.prevent="login">登入</v-btn>
+                  <v-btn block @click="googleLogin">以 Google 登入</v-btn>
                 </v-form>
               </v-container>
             </v-tab-item>
@@ -129,6 +130,7 @@ export default {
       registerResponse: { isPop: false, text: "", style: "error" },
       loginResponse: { isPop: false, text: "", style: "error" },
       loginLoading: false,
+      loginType: "local"
     };
   },
   methods: {
@@ -166,6 +168,36 @@ export default {
         vm.loginLoading = false;
       });
     },
+    googleLogin() {
+      this.$gAuth.signIn()
+      .then(user => {
+        // On success do something, refer to https://developers.google.com/api-client-library/javascript/reference/referencedocs#googleusergetid
+        console.log('user', user.getBasicProfile().uu.split("@")[0])
+        let vm = this;
+        vm.loginLoading = true;
+        //vm.loginType = "google";
+        vm.loginUser = {
+          username: user.getBasicProfile().uu.split("@")[0], 
+          password: "", 
+          loginType: "google", 
+          id_token: user.Bc.id_token
+          };
+        vm.$store.dispatch("user/login", vm.loginUser).then((res) => {
+          vm.loginResponse.text = res.message;
+          if (res.success) {
+            vm.loginResponse.style = "success";
+            vm.$router.push("/");
+          } else {
+            vm.loginResponse.isPop = true;
+            vm.loginResponse.style = "error";
+          }
+          vm.loginLoading = false;
+        })
+      })
+      .catch(error  => {
+        console.log(error);
+      })
+    }
   },
   computed: {
     passwordConfirmationRule() {

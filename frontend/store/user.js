@@ -34,7 +34,7 @@ export const actions = {
     login({ commit }, user) {
         return new Promise((reslove, reject) => {
             commit('auth_request')
-            userLogin(user.username, user.password)
+            userLogin(user.username, user.password, user.loginType, user.id_token)
                 .then(res => {
                     if (res.success) {
                         const token = res.token;

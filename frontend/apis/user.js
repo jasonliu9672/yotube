@@ -1,11 +1,13 @@
 import request from '@/utils/authRequest'
-export function userLogin(username,password) {
+export function userLogin(username,password,loginType,id_token) {
     return request({
       url: '/user/login',
       method: 'post',
       data: {
           username: username,
-          password: password
+          password: password,
+          loginType: loginType,
+          id_token: id_token
       },
     })
 }
