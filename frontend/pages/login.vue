@@ -49,7 +49,21 @@
                     {{ loginResponse.text }}
                   </v-alert>
                   <v-btn block @click.prevent="login">登入</v-btn>
-                  <v-btn block @click="googleLogin">以 Google 登入</v-btn>
+                  <v-container class="mt-4">
+                    <v-row align="center">
+                      <v-divider></v-divider>或者<v-divider></v-divider>
+                    </v-row>
+                  </v-container>
+                  <v-btn
+                    color="blue-grey"
+                    class="ma-2 white--text"
+                    block
+                    @click="googleLogin"
+                  >
+                    <v-icon right dark class="mr-5"> mdi-google </v-icon>
+                    使用Google帳號登入
+                  </v-btn>
+                  <!-- <v-btn block @click="googleLogin">以 Google 登入</v-btn> -->
                 </v-form>
               </v-container>
             </v-tab-item>
@@ -99,12 +113,6 @@
               </v-form>
             </v-tab-item>
           </v-tabs-items>
-          <!-- <v-container>
-          <v-row align="center">
-            <v-divider></v-divider>或者<v-divider></v-divider>
-          </v-row>
-        </v-container>
-        <v-button></v-button> -->
         </v-card-text>
       </v-container>
     </v-card>
@@ -130,7 +138,7 @@ export default {
       registerResponse: { isPop: false, text: "", style: "error" },
       loginResponse: { isPop: false, text: "", style: "error" },
       loginLoading: false,
-      loginType: "local"
+      loginType: "local",
     };
   },
   methods: {
@@ -169,35 +177,36 @@ export default {
       });
     },
     googleLogin() {
-      this.$gAuth.signIn()
-      .then(user => {
-        // On success do something, refer to https://developers.google.com/api-client-library/javascript/reference/referencedocs#googleusergetid
-        console.log('user', user.getBasicProfile().uu.split("@")[0])
-        let vm = this;
-        vm.loginLoading = true;
-        //vm.loginType = "google";
-        vm.loginUser = {
-          username: user.getBasicProfile().uu.split("@")[0], 
-          password: "", 
-          loginType: "google", 
-          id_token: user.Bc.id_token
+      this.$gAuth
+        .signIn()
+        .then((user) => {
+          // On success do something, refer to https://developers.google.com/api-client-library/javascript/reference/referencedocs#googleusergetid
+          console.log("user", user.getBasicProfile().uu.split("@")[0]);
+          let vm = this;
+          vm.loginLoading = true;
+          //vm.loginType = "google";
+          vm.loginUser = {
+            username: user.getBasicProfile().uu.split("@")[0],
+            password: "",
+            loginType: "google",
+            id_token: user.Bc.id_token,
           };
-        vm.$store.dispatch("user/login", vm.loginUser).then((res) => {
-          vm.loginResponse.text = res.message;
-          if (res.success) {
-            vm.loginResponse.style = "success";
-            vm.$router.push("/");
-          } else {
-            vm.loginResponse.isPop = true;
-            vm.loginResponse.style = "error";
-          }
-          vm.loginLoading = false;
+          vm.$store.dispatch("user/login", vm.loginUser).then((res) => {
+            vm.loginResponse.text = res.message;
+            if (res.success) {
+              vm.loginResponse.style = "success";
+              vm.$router.push("/");
+            } else {
+              vm.loginResponse.isPop = true;
+              vm.loginResponse.style = "error";
+            }
+            vm.loginLoading = false;
+          });
         })
-      })
-      .catch(error  => {
-        console.log(error);
-      })
-    }
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
   computed: {
     passwordConfirmationRule() {

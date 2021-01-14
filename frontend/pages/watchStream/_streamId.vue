@@ -51,7 +51,7 @@ import VuetifyLogo from "~/components/VuetifyLogo.vue";
 import io from "socket.io-client";
 import Cookies from "js-cookie";
 import { getStreamId } from "../../apis/user.js";
-const socket = io("localhost:4000", {
+const socket = io(process.env.dataServerUrl, {
   transports: ["websocket"],
   upgrade: false,
 });
