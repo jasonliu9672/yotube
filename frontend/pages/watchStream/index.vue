@@ -8,7 +8,7 @@
       </v-tabs>
     </v-container>
     <v-container
-      v-if="liveStreams"
+      v-if="liveStreams.length > 0"
       class="d-flex justify-start pa-0 mt-5 flex-wrap"
     >
       <v-tabs-items v-model="tab">
@@ -43,22 +43,24 @@
           </v-container>
         </v-tab-item>
         <v-tab-item :key="1">
-          <v-card
-            v-for="(streams, index) in liveStreams"
-            :key="index"
-            outlined
-            tile
-            hover
-            width="350"
-            height="250"
-            class="mr-6 mb-6 text-center"
-            color="grey"
-            @click.prevent="navigateToStream(streams.publisher.stream)"
-          >
-            <p class="display-1 text--primary">
-              {{ streams.publisher.stream }}
-            </p>
-          </v-card>
+          <v-container class="d-flex flex-row">
+            <v-card
+              v-for="(stream, index) in liveStreams"
+              :key="index"
+              outlined
+              tile
+              hover
+              width="350"
+              height="250"
+              class="mr-6 mb-6 text-center"
+              color="grey"
+              @click.prevent="navigateToStream(stream.publisher.stream)"
+            >
+              <p class="display-1 text--primary">
+                {{ stream.publisher.stream }}
+              </p>
+            </v-card>
+          </v-container>
         </v-tab-item>
       </v-tabs-items>
     </v-container>
@@ -67,6 +69,7 @@
 <script>
 import { getStreams, getM3U8 } from "../../apis/stream.js";
 export default {
+  layout: "default",
   data() {
     return {
       tab: "",
@@ -95,7 +98,6 @@ export default {
   //   },
   created() {
     this.fetchLiveStreams();
-    // getM3U8().then(res => conosole.log(res))
     this.streamRefresh = setInterval(() => {
       this.fetchLiveStreams();
     }, 5000);
@@ -105,8 +107,11 @@ export default {
       this.$router.push(`${this.$route.fullPath}/${streamName}`);
     },
     fetchLiveStreams() {
-      getStreams().then((res) => (this.liveStreams = res.data.live));
-      //console.log('fetch')
+      getStreams().then((res) => {
+        if (res.data.live) {
+          this.liveStreams = Object.values(res.data.live);
+        }
+      });
     },
   },
 };
