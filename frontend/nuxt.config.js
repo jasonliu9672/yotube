@@ -23,7 +23,7 @@ export default {
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
-    // {ssr: false, src:'~/plugins/vue-google-oauth2'}
+    {ssr: false, src:'~/plugins/vue-google-oauth2'},
     // {src: '~/plugins/flv.js', ssr:false}
     {src:'~/plugins/carousel3d.js',ssr:false}
   ],

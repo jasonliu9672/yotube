@@ -2,7 +2,7 @@ import Vue from 'vue'
 import GAuth from 'vue-google-oauth2'
  
 const gauthOption = {
-  clientId: 'CLIENT_ID.apps.googleusercontent.com',
+  clientId: process.env.CLIENT_ID,
   scope: 'profile email',
   prompt: 'select_account'
 }

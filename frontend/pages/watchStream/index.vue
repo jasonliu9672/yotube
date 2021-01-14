@@ -43,24 +43,22 @@
           </v-container>
         </v-tab-item>
         <v-tab-item :key="1">
-          <v-container class="d-flex flex-row">
-            <v-card
-              v-for="(stream, index) in liveStreams"
-              :key="index"
-              outlined
-              tile
-              hover
-              width="350"
-              height="250"
-              class="mr-6 mb-6 text-center"
-              color="grey"
-              @click.prevent="navigateToStream(stream.publisher.stream)"
-            >
-              <p class="display-1 text--primary">
-                {{ stream.publisher.stream }}
-              </p>
-            </v-card>
-          </v-container>
+          <v-card
+            v-for="(streams, index) in liveStreams"
+            :key="index"
+            outlined
+            tile
+            hover
+            width="350"
+            height="250"
+            class="mr-6 mb-6 text-center"
+            color="grey"
+            @click.prevent="navigateToStream(streams)"
+          >
+            <p class="display-1 text--primary">
+              {{ streams }}
+            </p>
+          </v-card>
         </v-tab-item>
       </v-tabs-items>
     </v-container>
@@ -68,6 +66,7 @@
 </template>
 <script>
 import { getStreams, getM3U8 } from "../../apis/stream.js";
+import { streamIdToUser } from "../../apis/user.js";
 export default {
   layout: "default",
   data() {
@@ -100,18 +99,23 @@ export default {
     this.fetchLiveStreams();
     this.streamRefresh = setInterval(() => {
       this.fetchLiveStreams();
-    }, 5000);
+    }, 10000);
   },
   methods: {
     navigateToStream(streamName) {
       this.$router.push(`${this.$route.fullPath}/${streamName}`);
     },
-    fetchLiveStreams() {
-      getStreams().then((res) => {
-        if (res.data.live) {
-          this.liveStreams = Object.values(res.data.live);
+    async fetchLiveStreams() {
+      const streams = await getStreams();
+      if (streams.data.live) {
+
+        console.log("curr: ",streams);
+        const streamIds = Object.keys(streams.data.live);
+        if (Array.isArray(streamIds)) {
+          const usernames =  await streamIdToUser(streamIds);
+          this.liveStreams = usernames.usernames;
         }
-      });
+      }
     },
   },
 };

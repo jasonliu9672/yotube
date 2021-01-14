@@ -9,7 +9,6 @@ const UserSchema = mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
     trim: true,
     minlength: 3
   },
@@ -18,6 +17,9 @@ const UserSchema = mongoose.Schema({
     default: Date.now
   },
   streamId: {
+    type: String
+  },
+  picture: {
     type: String
   }
 })
