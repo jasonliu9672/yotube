@@ -101,7 +101,7 @@ export default {
           this.flvPlayer = flv.createPlayer({
           type: "flv",
           isLive: true,
-          hasAudio: false,
+          hasAudio: true,
           url:
             process.env.mediaServerUrl +
             `/live/${streamId}.flv`,

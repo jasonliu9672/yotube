@@ -43,7 +43,8 @@
           </v-container>
         </v-tab-item>
         <v-tab-item :key="1">
-          <v-card
+          <v-container class="d-flex flex-row">
+            <v-card
             v-for="(streams, index) in liveStreams"
             :key="index"
             outlined
@@ -59,6 +60,7 @@
               {{ streams }}
             </p>
           </v-card>
+          </v-container>
         </v-tab-item>
       </v-tabs-items>
     </v-container>

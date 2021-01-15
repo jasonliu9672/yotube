@@ -109,7 +109,8 @@
                   {{ registerResponse.text }}
                 </v-alert>
                 <p>點擊「註冊」即代表您已閱讀並瞭解服務條款及隱私權聲明。</p>
-                <v-btn @click.prevent="register">註冊</v-btn>
+                <v-btn   :loading="registerLoading"
+      :disabled="registerLoading" @click.prevent="register">註冊</v-btn>
               </v-form>
             </v-tab-item>
           </v-tabs-items>
@@ -139,6 +140,7 @@ export default {
       loginResponse: { isPop: false, text: "", style: "error" },
       loginLoading: false,
       loginType: "local",
+      registerLoading:false
     };
   },
   methods: {
@@ -147,6 +149,7 @@ export default {
     // }
     register() {
       let vm = this;
+      vm.registerLoading = true;
       userRegister(vm.registerUser)
         .then((res) => {
           vm.registerResponse.isPop = true;
@@ -156,6 +159,7 @@ export default {
           } else {
             vm.registerResponse.style = "error";
           }
+          vm.registerLoading = false
         })
         .catch((error) => {
           console.log(error);
